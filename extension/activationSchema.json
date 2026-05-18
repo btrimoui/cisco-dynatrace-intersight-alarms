@@ -1,0 +1,131 @@
+{
+  "types": {
+    "intersight_endpoint": {
+      "type": "object",
+      "displayName": "Intersight Endpoint",
+      "summaryPattern": "{url}",
+      "properties": {
+        "url": {
+          "displayName": "Intersight URL",
+          "type": "text",
+          "nullable": false,
+          "default": "",
+          "constraints": [{"type": "NOT_EMPTY"}],
+          "metadata": {"placeholder": "https://intersight.com"}
+        },
+        "client_id": {
+          "displayName": "OAuth2 Client ID",
+          "type": "secret",
+          "nullable": false,
+          "default": "",
+          "constraints": [{"type": "NOT_EMPTY"}]
+        },
+        "client_secret": {
+          "displayName": "OAuth2 Client Secret",
+          "type": "secret",
+          "nullable": false,
+          "default": "",
+          "constraints": [{"type": "NOT_EMPTY"}]
+        },
+        "proxy": {
+          "displayName": "Proxy URL (optional)",
+          "type": "text",
+          "nullable": true,
+          "metadata": {"placeholder": "http://proxy.example.com:8080"}
+        },
+        "poll_interval": {
+          "displayName": "Poll Interval (minutes)",
+          "type": "integer",
+          "nullable": false,
+          "default": 5
+        },
+        "enable_alarms": {
+          "displayName": "Enable Alarm Monitoring",
+          "type": "boolean",
+          "nullable": false,
+          "default": true
+        },
+        "enable_critical": {
+          "displayName": "Enabled Severities - Critical",
+          "type": "boolean",
+          "nullable": false,
+          "default": true,
+          "precondition": {
+            "type": "EQUALS",
+            "property": "enable_alarms",
+            "expectedValue": true
+          }
+        },
+        "enable_warning": {
+          "displayName": "Enabled Severities - Warning",
+          "type": "boolean",
+          "nullable": false,
+          "default": true,
+          "precondition": {
+            "type": "EQUALS",
+            "property": "enable_alarms",
+            "expectedValue": true
+          }
+        },
+        "enable_info": {
+          "displayName": "Enabled Severities - Info",
+          "type": "boolean",
+          "nullable": false,
+          "default": false,
+          "precondition": {
+            "type": "EQUALS",
+            "property": "enable_alarms",
+            "expectedValue": true
+          }
+        },
+        "alarm_timeout": {
+          "displayName": "Alarm Timeout (minutes) - must be greater than poll interval",
+          "type": "integer",
+          "nullable": false,
+          "default": 10,
+          "precondition": {
+            "type": "EQUALS",
+            "property": "enable_alarms",
+            "expectedValue": true
+          }
+        }
+      }
+    },
+    "pythonRemote": {
+      "type": "object",
+      "displayName": "Cisco Intersight Remote Configuration",
+      "properties": {
+        "endpoints": {
+          "displayName": "Intersight Endpoints",
+          "type": "list",
+          "items": {"type": {"$ref": "#/types/intersight_endpoint"}},
+          "nullable": false,
+          "minItems": 1
+        }
+      }
+    },
+    "pythonLocal": {
+      "type": "object",
+      "displayName": "Cisco Intersight Local Configuration",
+      "properties": {
+        "endpoints": {
+          "displayName": "Intersight Endpoints",
+          "type": "list",
+          "items": {"type": {"$ref": "#/types/intersight_endpoint"}},
+          "nullable": false,
+          "minItems": 1
+        }
+      }
+    }
+  },
+  "properties": {
+    "endpoints": {
+      "displayName": "Intersight Endpoints",
+      "type": "list",
+      "items": {"type": {"$ref": "#/types/intersight_endpoint"}},
+      "nullable": false,
+      "minItems": 1
+    }
+  },
+  "required": ["endpoints"]
+}

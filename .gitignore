@@ -1,0 +1,22 @@
+# Secrets
+secrets.json
+activation.json
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+extension/lib/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Certificates
+*.pem
+*.key
+
+# Cache files
+/tmp/
+*.zip
