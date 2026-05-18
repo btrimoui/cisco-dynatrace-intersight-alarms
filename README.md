@@ -27,7 +27,6 @@ Unlike SNMP (hardware faults only), this extension covers the full alarm scope:
 ## Prerequisites
 
 - Dynatrace SaaS/Managed **≥ 1.335** + Environment ActiveGate **≥ 1.335**
-- Dynatrace API token scopes: `extensions.read/write`, `events.ingest`, `metrics.ingest`
 - Intersight OAuth2 credentials with **Read Only** role 
 
 #### Creating Intersight OAuth2 Credentials
@@ -55,7 +54,7 @@ Unlike SNMP (hardware faults only), this extension covers the full alarm scope:
 | **Proxy** | ❌ | HTTP proxy if required | `http://proxy.corp.com:80` |
 | **Poll Interval** | ✅ | Minutes between polls | `5` |
 | **Critical / Warning / Info** | ❌ | Per-severity ingestion toggles | `true` |
-| **Alarm Timeout** | ✅ | Minutes before unseen alarm closes | `60` |
+| **Alarm Timeout** | ✅ | Minutes before unseen alarm closes | `10` |
 
 ---
 
