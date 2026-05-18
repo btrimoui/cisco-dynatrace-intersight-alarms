@@ -70,13 +70,21 @@ Outage: Poll fails → Read cache → Resend refresh events → Problems stay op
 ---
 
 ## Severity Mapping
+## Severity Mapping
 
-| Intersight | Dynatrace Event | Davis Severity |
+All Dynatrace Problems created by this extension are rated **SEV-3 (Minor)** by 
+Davis AI — this is a platform limitation for `CUSTOM_DEVICE` entity events and 
+cannot be overridden via the event payload.
+
+| Intersight | Dynatrace Event | Opens a Problem |
 |---|---|---|
-| Critical / Warning | Info | `CUSTOM_ALERT` | SEV-3 (Minor)* |
+| Critical | `CUSTOM_ALERT` | ✅ Yes |
+| Warning | `CUSTOM_ALERT` | ✅ Yes |
+| Info | `CUSTOM_INFO` | ✅ Yes |
 
-> *Davis AI assigns SEV-3 to all `CUSTOM_DEVICE` events by design. Use Alerting 
-> Profiles filtering on the `Severity` event property to route P1/P2 tickets correctly.
+> To route P1/P2 tickets correctly, configure an Alerting Profile filtering on 
+> the `Severity` event property:
+> **Settings → Alerting → Alerting Profiles → Filter: property `Severity` = `Critical`**
 
 ---
 
