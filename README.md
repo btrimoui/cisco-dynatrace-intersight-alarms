@@ -73,8 +73,7 @@ Outage: Poll fails → Read cache → Resend refresh events → Problems stay op
 
 | Intersight | Dynatrace Event | Davis Severity |
 |---|---|---|
-| Critical / Warning | `CUSTOM_ALERT` | SEV-3 (Minor)* |
-| Info | `CUSTOM_INFO` | Info |
+| Critical / Warning | Info | `CUSTOM_ALERT` | SEV-3 (Minor)* |
 
 > *Davis AI assigns SEV-3 to all `CUSTOM_DEVICE` events by design. Use Alerting 
 > Profiles filtering on the `Severity` event property to route P1/P2 tickets correctly.
