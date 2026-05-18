@@ -11,7 +11,7 @@ via the Events API v2, with full open/close lifecycle management.
 
 ## What Gets Monitored
 
-Unlike SNMP (hardware faults only), this extension covers the full alarm scope:
+This extension covers the full alarm scope:
 
 - 🔴 Hardware faults — PSU, Fan, Memory, CPU, GPU, Disk
 - 📦 Failed configuration
