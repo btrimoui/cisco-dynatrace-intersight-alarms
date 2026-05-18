@@ -97,9 +97,10 @@ cannot be overridden via the event payload.
 
 ---
 
-*Cisco Internal Use — Not for external distribution.*
+## License
+MIT License
 
-
+---
 
 ## Building and signing
 
