@@ -13,14 +13,14 @@ via the Events API v2, with full open/close lifecycle management.
 
 Unlike SNMP (hardware faults only), this extension covers the full alarm scope:
 
-- 🔴 Hardware faults — PSU, Fan, Memory, CPU, GPU, Disk
-- 📦 Failed configuration
-- Profile Status anomalies (failed, out of sync..)
-- 🔒 Target disconnection faults
-- 🔑 OAuth token expiry and IAM policy violations
-- 🖥️ Cisco Intersight Appliance faults (not available via SNMP)
-- 3x more alarms for UCS Servers available via REST API comparing to SNMP
-- 2.3x more alarms for UCS IOM/Chassis available via REST API comparing to SNMP
+🔴 Hardware faults — PSU, Fan, Memory, CPU, GPU, Disk
+📦 Failed configuration
+🔄 Profile status anomalies — failed, out of sync
+🔌 Target disconnection faults
+🔑 OAuth token expiry and IAM policy violations
+🖥️ Cisco Intersight Appliance faults (not available via SNMP)
+📊 3x more alarms for UCS Servers available via REST API vs SNMP
+📊 2.3x more alarms for UCS IOM/Chassis available via REST API vs SNMP
 
 ---
 
