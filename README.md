@@ -58,6 +58,7 @@ chown root:dtuserag /var/lib/dynatrace/remotepluginmodule/agent/conf/certificate
 chmod 644 /var/lib/dynatrace/remotepluginmodule/agent/conf/certificates/cisco-intersight-ca.pem
 systemctl restart dynatracegateway
 
+---
 
 ## Installation
 
