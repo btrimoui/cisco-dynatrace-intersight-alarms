@@ -36,6 +36,29 @@ This extension covers the full alarm scope:
 
 ---
 
+## Trust Setup (one-time per Dynatrace tenant)
+
+The signed extension is verified by Dynatrace against trusted root certificates. Before installing, register this extension's CA certificate in your Dynatrace tenant **and** on each ActiveGate that will run the extension.
+
+### A. Register CA in your Dynatrace tenant
+
+1. Download [`ca.pem`](./ca.pem) from this repo
+2. In Dynatrace UI: **Settings → search "Extension signing"** → upload `ca.pem` as a trusted root certificate
+
+### B. Register CA on the ActiveGate (Linux)
+
+Copy `ca.pem` to the AG's extension trust store:
+
+```bash
+scp ca.pem root@<your-activegate>:/tmp/
+
+# On the ActiveGate:
+cp /tmp/ca.pem /var/lib/dynatrace/remotepluginmodule/agent/conf/certificates/cisco-intersight-ca.pem
+chown root:dtuserag /var/lib/dynatrace/remotepluginmodule/agent/conf/certificates/cisco-intersight-ca.pem
+chmod 644 /var/lib/dynatrace/remotepluginmodule/agent/conf/certificates/cisco-intersight-ca.pem
+systemctl restart dynatracegateway
+
+
 ## Installation
 
 1. Download the signed `.zip` from the [Releases](https://github.com/btrimoui/cisco-dynatrace-intersight-alarms/releases) page
