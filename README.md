@@ -42,7 +42,7 @@ The signed extension is verified by Dynatrace against trusted root certificates.
 
 ### A. Register CA in your Dynatrace tenant
 
-1. Download [`ca.pem`](./ca.pem) from this repo
+1. Download the CA certificate: [`ca.pem`](https://github.com/btrimoui/cisco-dynatrace-intersight-alarms/blob/main/ca.pem) from this repo
 2. In Dynatrace UI: **Settings → search "Extension signing"** → upload `ca.pem` as a trusted root certificate
 
 ### B. Register CA on the ActiveGate (Linux)
