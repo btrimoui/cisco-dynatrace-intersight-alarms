@@ -57,6 +57,9 @@ cp /tmp/ca.pem /var/lib/dynatrace/remotepluginmodule/agent/conf/certificates/cis
 chown root:dtuserag /var/lib/dynatrace/remotepluginmodule/agent/conf/certificates/cisco-intersight-ca.pem
 chmod 644 /var/lib/dynatrace/remotepluginmodule/agent/conf/certificates/cisco-intersight-ca.pem
 systemctl restart dynatracegateway
+```
+
+> **Note:** This is a one-time setup per tenant and per ActiveGate. All future releases of this extension signed with the same CA will be trusted automatically.
 
 ---
 
@@ -94,7 +97,6 @@ Outage: Poll fails → Read cache → Resend refresh events → Problems stay op
 ---
 
 ## Severity Mapping
-## Severity Mapping
 
 All Dynatrace Problems created by this extension are rated **SEV-3 (Minor)** by 
 Davis AI — this is a platform limitation for `CUSTOM_DEVICE` entity events and 
@@ -125,11 +127,10 @@ cannot be overridden via the event payload.
 MIT License
 
 ---
+
 <img width="1230" height="601" alt="image" src="https://github.com/user-attachments/assets/fd477ccf-e8c7-4d8e-9daa-ee76c09e3619" />
 
-
 <img width="951" height="585" alt="image" src="https://github.com/user-attachments/assets/abde2e8c-b581-41d6-985f-2e348f838acb" />
-
 
 ## Building and signing
 
