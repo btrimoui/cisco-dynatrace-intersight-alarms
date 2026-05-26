@@ -1,5 +1,5 @@
 name: custom:cisco-intersight
-version: 1.0.4
+version: 1.0.5
 minDynatraceVersion: "1.335.0"
 author:
   name: "Cisco-Dev"
