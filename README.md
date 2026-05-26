@@ -1,5 +1,5 @@
 # Cisco Intersight → Dynatrace Integration
-### Dynatrace Extension 2.0 | custom:cisco-intersight | v1.0.1
+### Dynatrace Extension 2.0 | custom:cisco-intersight | v1.0.4
 
 Polls **Cisco Intersight** alarms and converts them into Dynatrace Problems 
 via the Events API v2, with full open/close lifecycle management.
@@ -21,6 +21,15 @@ This extension covers the full alarm scope:
 - 🖥️ Cisco Intersight Appliance faults (not available via SNMP)
 - 📊 3x more alarms for UCS Servers available via REST API vs SNMP
 - 📊 2.3x more alarms for UCS IOM/Chassis available via REST API vs SNMP
+
+
+### Lifecycle Management
+
+- **Active alarms** are reported as Dynatrace problems and refreshed on every poll.
+- **Cleared or acknowledged alarms** are detected by diffing successive polls. A 
+  resolution event is sent to close the corresponding Dynatrace problem within ~1 minute.
+- **Intersight outages** trigger cached refresh events to keep problems open until 
+  connectivity returns.
 
 ---
 
@@ -119,6 +128,7 @@ cannot be overridden via the event payload.
 | Version | Feature | Target |
 |---|---|---|
 | **v1.0.1** | Core alarms polling + outage safety net | ✅ Released |
+| **v1.0.4** | Faster first-poll bootstrap, automatic problem closure on cleared/acknowledged alarms, Appliance hostname fallback | ✅ Released |
 | **v1.1.0** | Security Advisories + Field Notices | Q3 2026 |
 
 ---
