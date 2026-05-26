@@ -254,7 +254,7 @@ class ExtensionImpl(Extension):
         Lifetime: one fetch per endpoint per process.
 
         Account name resolution rules:
-        - SaaS (URL ends with .intersight.com): use Name from /iam/Accounts.
+        - SaaS: use Name from /iam/Accounts.
         - Appliance / non-SaaS: API typically returns 'admin' which is useless
           as a display name — fall back to the appliance host (FQDN).
         - Also fall back to host if the API name is in _USELESS_ACCOUNT_NAMES
@@ -303,12 +303,18 @@ class ExtensionImpl(Extension):
         )
         return identity
 
-    def _build_event_title(self, alarm: dict, account_name: str) -> str:
+    def _build_event_title(self, alarm: dict, account_name: str = "") -> str:
+        """Build the event title shown in Davis problem cards.
+        
+        v1.0.5: Intersight Account is intentionally NOT included in the title
+        since it's already visible via the affected entity name and the
+        'Intersight Account' event property — adding it to the title was just
+        visual noise. The account_name parameter is kept on the signature for
+        backward compatibility with existing callers.
+        """
         name        = alarm.get("Name", "Unknown")
         severity    = alarm.get("Severity", "Info")
         description = alarm.get("Description", "No details")
-        if account_name:
-            return f"[{severity}] [{account_name}] {name}: {description[:120]}"
         return f"[{severity}] {name}: {description[:120]}"
 
     def _send_alarm_event(self, alarm: dict, base_url: str,
