@@ -45,14 +45,22 @@ This extension covers the full alarm scope:
 
 ---
 
-## Trust Setup (one-time per Dynatrace tenant)
+## Signing the Extension
 
-The signed extension is verified by Dynatrace against trusted root certificates. Before installing, register this extension's CA certificate in your Dynatrace tenant **and** on each ActiveGate that will run the extension.
+Dynatrace requires every Python extension to be signed by a trusted Certificate Authority (CA) before it can be deployed. The signature is verified both by the Dynatrace tenant (at upload time) and by the ActiveGate (at runtime).
 
-### A. Register CA in your Dynatrace tenant
+You have two options.
 
-1. Download the CA certificate: [`ca.pem`](https://github.com/btrimoui/cisco-dynatrace-intersight-alarms/blob/main/ca.pem) from this repo
-2. In Dynatrace UI: **Settings → search "Extension signing"** → upload `ca.pem` as a trusted root certificate
+### Option 1 — Use Your Own CA (recommended for production)
+
+For any production deployment, sign the extension with a CA that **you control**. This keeps the trust boundary inside your organization and makes audit/compliance straightforward.
+
+### Option 2 — Use the CA Provided in This Repo
+
+This repo ships with a `ca.pem` and a matching `developer.pem` so you can build and deploy without generating your own keys.
+
+### A. Trust the CA on your Dynatrace tenant**:
+   Settings → *Extension signing certificates* → upload `ca.pem` from this repo.
 
 ### B. Register CA on the ActiveGate (Linux)
 
