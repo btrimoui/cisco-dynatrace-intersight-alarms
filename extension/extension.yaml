@@ -1,5 +1,5 @@
 name: custom:cisco-intersight
-version: 1.0.1
+version: 1.0.4
 minDynatraceVersion: "1.335.0"
 author:
   name: "Cisco-Dev"
@@ -26,12 +26,19 @@ topology:
     - name: cisco:intersight_domain
       displayName: Cisco Intersight Account
       rules:
-        - idPattern: cisco_intersight_{intersight_host}
+        - idPattern: cisco_intersight_{account_moid}
+          instanceNamePattern: "{account_name}"
           sources:
             - sourceType: Metrics
               condition: $prefix(intersight.)
           attributes:
-            - pattern: "{intersight_host}"
-              key: intersight_host
+            - pattern: "{account_moid}"
+              key: account_moid
+              displayName: Intersight Account MOID
+            - pattern: "{account_name}"
+              key: account_name
+              displayName: Intersight Account
+            - pattern: "{host}"
+              key: host
               displayName: Intersight Host
   relationships: []
