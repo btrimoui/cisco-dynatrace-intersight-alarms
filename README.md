@@ -1,5 +1,5 @@
 # Cisco Intersight → Dynatrace Integration
-### Dynatrace Extension 2.0 | custom:cisco-intersight | v1.0.4
+### Dynatrace Extension 2.0 | custom:cisco-intersight | v1.0.5
 
 Polls **Cisco Intersight** alarms and converts them into Dynatrace Problems 
 via the Events API v2, with full open/close lifecycle management.
@@ -129,6 +129,7 @@ cannot be overridden via the event payload.
 |---|---|---|
 | **v1.0.1** | Core alarms polling + outage safety net | ✅ Released |
 | **v1.0.4** | Faster first-poll bootstrap, automatic problem closure on cleared/acknowledged alarms, Appliance hostname fallback | ✅ Released |
+| **v1.0.5** | Cleaner event titles (account name removed from title prefix) | ✅ Release
 | **v1.1.0** | Security Advisories + Field Notices | Q3 2026 |
 
 ---
