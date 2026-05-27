@@ -1,8 +1,8 @@
 name: custom:cisco-intersight
-version: 1.0.5
-minDynatraceVersion: "1.335.0"
+version: 1.2.7
+minDynatraceVersion: "1.280.0"
 author:
-  name: "Cisco-Dev"
+  name: Cisco Dev
 
 python:
   runtime:
@@ -18,27 +18,31 @@ python:
 metrics:
   - key: intersight.heartbeat
     metadata:
-      displayName: Intersight Domain Heartbeat
+      displayName: Cisco Intersight Heartbeat
+      description: Liveness signal used as topology source
       unit: Count
 
 topology:
   types:
     - name: cisco:intersight_domain
-      displayName: Cisco Intersight Account
+      displayName: Cisco Intersight Domain
+      enabled: true
       rules:
         - idPattern: cisco_intersight_{account_moid}
           instanceNamePattern: "{account_name}"
           sources:
             - sourceType: Metrics
-              condition: $prefix(intersight.)
+              condition: $eq(intersight.heartbeat)
+          requiredDimensions:
+            - key: account_moid
+            - key: account_name
           attributes:
-            - pattern: "{account_moid}"
-              key: account_moid
-              displayName: Intersight Account MOID
-            - pattern: "{account_name}"
-              key: account_name
-              displayName: Intersight Account
-            - pattern: "{host}"
-              key: host
+            - key: account_moid
+              displayName: Account MOID
+              pattern: "{account_moid}"
+            - key: account_name
+              displayName: Account Name
+              pattern: "{account_name}"
+            - key: host
               displayName: Intersight Host
-  relationships: []
+              pattern: "{host}"
