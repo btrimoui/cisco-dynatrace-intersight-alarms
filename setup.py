@@ -20,7 +20,7 @@ setup(
     name="cisco_intersight",
     version=find_version(),
     description="Cisco Intersight Alarm Monitoring Extension for Dynatrace",
-    author="Cisco",
+    author="Cisco Dev",
     author_email="btrimoui@cisco.com",
     url="https://github.com/btrimoui/cisco-dynatrace-intersight-alarms",
     packages=find_packages(),
