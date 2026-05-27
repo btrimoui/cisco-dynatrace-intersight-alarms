@@ -41,6 +41,29 @@ Dynatrace Problems via the Events API v2 with full open/close lifecycle manageme
 
 ---
 
+## Tested At Scale
+
+This release has been validated on a single Environment ActiveGate
+managing a mix of SaaS regions and on-prem Connected Virtual Appliances (CVA):
+
+| Metric | Value |
+|---|---|
+| **Intersight accounts** | 8 (mixed SaaS + CVA) |
+| **SaaS regions** | `us-east-1.intersight.com`, `eu-central-1.intersight.com` |
+| **CVA appliances** | 1 (self-hosted) |
+| **Active alarms (peak)** | ~2,000 across all accounts |
+| **Largest single account** | 948 active alarms |
+| **Advisories tracked** | 35–42 unique per account, 113 PSIRT + 119 FN/EOL in catalog |
+| **ActiveGate footprint** | ~70 MB RSS, 12 threads, 0.3% CPU steady-state |
+| **Poll cadence** | 5 min (alarms) / 24 h (advisories) |
+| **Cycle wall-clock** | ~40 s for full alarm sweep across 8 accounts |
+
+> Performance scales linearly with alarm count. The single-AG architecture 
+> handled this load with significant headroom; environments with substantially 
+> more accounts or alarms can distribute polling across multiple ActiveGates.
+
+---
+
 ## Prerequisites
 
 - Dynatrace SaaS/Managed **≥ 1.335** + Environment ActiveGate **≥ 1.335**
