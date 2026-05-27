@@ -1,8 +1,8 @@
 # Cisco Intersight → Dynatrace Integration
-### Dynatrace Extension 2.0 | custom:cisco-intersight | v1.0.5
+### Dynatrace Extension 2.0 | custom:cisco-intersight | v1.2.7
 
-Polls **Cisco Intersight** alarms and converts them into Dynatrace Problems 
-via the Events API v2, with full open/close lifecycle management.
+Polls **Cisco Intersight** alarms and security advisories, converting them into
+Dynatrace Problems via the Events API v2 with full open/close lifecycle management.
 
 > ⚠️ **ActiveGate is required.** Python EF2 extensions run exclusively on an
 > Environment ActiveGate via the Extension Execution Controller (EEC).
@@ -11,25 +11,33 @@ via the Events API v2, with full open/close lifecycle management.
 
 ## What Gets Monitored
 
-This extension covers the full alarm scope:
-
+### Alarms (full Intersight scope)
 - 🔴 Hardware faults — PSU, Fan, Memory, CPU, GPU, Disk
 - 📦 Failed configuration
 - 🔄 Profile status anomalies — failed, out of sync
 - 🔌 Target disconnection faults
 - 🔑 OAuth token expiry and IAM policy violations
 - 🖥️ Cisco Intersight Appliance faults (not available via SNMP)
-- 📊 3x more alarms for UCS Servers available via REST API vs SNMP
-- 📊 2.3x more alarms for UCS IOM/Chassis available via REST API vs SNMP
+- 📊 3× more alarms for UCS Servers vs SNMP
+- 📊 2.3× more alarms for UCS IOM/Chassis vs SNMP
 
+### Security Advisories (opt-in)
+- 🛡️ **PSIRT** — Cisco Product Security Incident Response Team advisories
+- 📋 **Field Notices** — Hardware/software compatibility issues
+- ⏳ **End-of-Life** — Lifecycle and support deadlines
 
 ### Lifecycle Management
-
-- **Active alarms** are reported as Dynatrace problems and refreshed on every poll.
-- **Cleared or acknowledged alarms** are detected by diffing successive polls. A 
-  resolution event is sent to close the corresponding Dynatrace problem within ~1 minute.
-- **Intersight outages** trigger cached refresh events to keep problems open until 
-  connectivity returns.
+- **Active alarms** are reported as Dynatrace problems with a 6-hour Davis 
+  timeout that survives ActiveGate restarts and prolonged maintenance windows.
+- **Cleared or acknowledged alarms** are detected by diffing successive polls. 
+  A resolution event is sent to close the corresponding Dynatrace problem within 
+  ~1 minute.
+- **Intersight outages** trigger cached refresh events to keep problems open 
+  until connectivity returns.
+- **Advisories** are kept open via 5-hour keepalive refresh (zero API calls), 
+  preserving Davis problems between 24h advisory polls.
+- **Brand-new accounts** defer event reporting to the second poll, allowing 
+  the topology entity to materialize first and preventing orphaned events.
 
 ---
 
@@ -47,22 +55,27 @@ This extension covers the full alarm scope:
 
 ## Signing the Extension
 
-Dynatrace requires every Python extension to be signed by a trusted Certificate Authority (CA) before it can be deployed. The signature is verified both by the Dynatrace tenant (at upload time) and by the ActiveGate (at runtime).
+Dynatrace requires every Python extension to be signed by a trusted Certificate 
+Authority (CA) before it can be deployed. The signature is verified both by the 
+Dynatrace tenant (at upload time) and by the ActiveGate (at runtime).
 
 You have two options.
 
 ### Option 1 — Use Your Own CA (recommended for production)
 
-For any production deployment, sign the extension with a CA that **you control**. This keeps the trust boundary inside your organization and makes audit/compliance straightforward.
+For any production deployment, sign the extension with a CA that **you control**. 
+This keeps the trust boundary inside your organization and makes audit/compliance 
+straightforward.
 
 ### Option 2 — Use the CA Provided in This Repo
 
-This repo ships with a `ca.pem` and a matching `developer.pem` so you can build and deploy without generating your own keys.
+This repo ships with a `ca.pem` and a matching `developer.pem` so you can build 
+and deploy without generating your own keys.
 
-### A. Trust the CA on your Dynatrace tenant**:
-   Settings → *Extension signing certificates* → upload `ca.pem` from this repo.
+#### A. Trust the CA on your Dynatrace tenant
+Settings → *Extension signing certificates* → upload `ca.pem` from this repo.
 
-### B. Register CA on the ActiveGate (Linux)
+#### B. Register CA on the ActiveGate (Linux)
 
 Copy `ca.pem` to the AG's extension trust store:
 
@@ -76,7 +89,8 @@ chmod 644 /var/lib/dynatrace/remotepluginmodule/agent/conf/certificates/cisco-in
 systemctl restart dynatracegateway
 ```
 
-> **Note:** This is a one-time setup per tenant and per ActiveGate. All future releases of this extension signed with the same CA will be trusted automatically.
+> **Note:** This is a one-time setup per tenant and per ActiveGate. All future 
+> releases of this extension signed with the same CA will be trusted automatically.
 
 ---
 
@@ -90,15 +104,39 @@ systemctl restart dynatracegateway
 
 ## Configuration
 
+### Endpoint Settings
+
 | Field | Required | Description | Example |
 |---|---|---|---|
-| **URL** | ✅ | Intersight endpoint URL | `https://intersight.com` |
+| **Intersight URL** | ✅ | Intersight endpoint URL | `https://eu-central-1.intersight.com` |
 | **Client ID** | ✅ | OAuth2 Client ID | `6f3b2a...` |
 | **Client Secret** | ✅ | OAuth2 Client Secret (encrypted) | `••••••••` |
-| **Proxy** | ❌ | HTTP proxy if required | `http://proxy.corp.com:80` |
-| **Poll Interval** | ✅ | Minutes between polls | `5` |
-| **Critical / Warning / Info** | ❌ | Per-severity ingestion toggles | `true` |
-| **Alarm Timeout** | ✅ | Minutes before unseen alarm closes | `10` |
+| **Verify TLS Certificate** | ✅ | Enable for production. Disable only for self-signed appliance certs | `true` |
+| **Proxy** | ❌ | HTTP/HTTPS proxy if required | `http://proxy.corp.com:8080` |
+
+### Alarm Polling
+
+| Field | Required | Description | Example |
+|---|---|---|---|
+| **Poll Interval** | ✅ | Minutes between Intersight queries (1–60) | `5` |
+| **Enable Alarm Monitoring** | ✅ | Master toggle for alarms | `true` |
+| **Critical / Warning / Info** | ❌ | Per-severity ingestion toggles | `Critical=on, Warning=on, Info=off` |
+
+### Security Advisories (opt-in)
+
+| Field | Required | Description | Example |
+|---|---|---|---|
+| **Enable Security Advisories** | ❌ | Master toggle for advisories | `false` (default) |
+| **Advisory Poll Interval (hours)** | ❌ | Hours between advisory polls (1–168) | `24` |
+| **Include PSIRT** | ❌ | Cisco Security Advisories | `true` |
+| **Include Field Notices** | ❌ | Field Notices | `true` |
+| **Include End-of-Life** | ❌ | EOL/EOSM notices | `true` |
+
+> **Davis problem timeout:** Active alarm problems are kept open with a 6-hour 
+> Davis timeout. This decouples problem lifetime from poll cadence, so 
+> ActiveGate restarts, host maintenance, or transient network issues do not 
+> trigger mass close/reopen cycles. Problems are explicitly closed via 
+> resolution events the moment an alarm is cleared or acknowledged in Intersight.
 
 ---
 
@@ -108,8 +146,11 @@ If Intersight becomes unreachable, the extension reads a local alarm cache and
 resends refresh events with the original correlation tags — keeping Dynatrace
 Problems **open** until connectivity is restored.
 
-Normal: Poll → Save cache → Send events to DT ✅
-Outage: Poll fails → Read cache → Resend refresh events → Problems stay open ✅
+```
+Normal:   Poll → Save cache → Send events to DT ✅
+Outage:   Poll fails → Read cache → Resend refresh events → Problems stay open ✅
+Restart:  AG restart → Cache hydrates from disk → No mass close/reopen ✅
+```
 
 ---
 
@@ -123,7 +164,7 @@ cannot be overridden via the event payload.
 |---|---|---|
 | Critical | `CUSTOM_ALERT` | ✅ Yes |
 | Warning | `CUSTOM_ALERT` | ✅ Yes |
-| Info | `CUSTOM_INFO` | ✅ Yes |
+| Info | `CUSTOM_ALERT` | ✅ Yes |
 
 > To route P1/P2 tickets correctly, configure an Alerting Profile filtering on 
 > the `Severity` event property:
@@ -133,12 +174,16 @@ cannot be overridden via the event payload.
 
 ## Roadmap
 
-| Version | Feature | Target |
+| Version | Feature | Status |
 |---|---|---|
-| **v1.0.1** | Core alarms polling + outage safety net | ✅ Released |
-| **v1.0.4** | Faster first-poll bootstrap, automatic problem closure on cleared/acknowledged alarms, Appliance hostname fallback | ✅ Released |
-| **v1.0.5** | Cleaner event titles (account name removed from title prefix) | ✅ Release
-| **v1.1.0** | Security Advisories + Field Notices | Q3 2026 |
+| **v1.0.1** | Core alarm polling + outage safety net | ✅ Released |
+| **v1.0.4** | Faster first-poll bootstrap, auto problem closure on clear/ack, Appliance hostname fallback | ✅ Released |
+| **v1.0.5** | Cleaner event titles (account name removed from title prefix) | ✅ Released |
+| **v1.1.0** | Security Advisories (PSIRT, Field Notices, End-of-Life) with incremental catalog fetch | ✅ Released |
+| **v1.2.0** | TLS verification toggle, retry/backoff, paginated Intersight responses, identity caching | ✅ Released |
+| **v1.2.3** | Persistent topology warmup guard — prevents mass close/reopen on AG restart | ✅ Released |
+| **v1.2.6** | Per-MOID logging moved to DEBUG (~99% INFO log volume reduction) | ✅ Released |
+| **v1.2.7** | 6-hour Davis problem timeout — survives AG maintenance & prolonged outages | ✅ Released |
 
 ---
 
@@ -169,17 +214,13 @@ MIT License
 ## Structure
 
 ### cisco_intersight folder
-
-Contains the python code for the extension
+Contains the Python code for the extension.
 
 ### extension folder
-
-Contains the yaml and activation definitions for the framework v2 extension
+Contains the YAML and activation definitions for the framework v2 extension.
 
 ### setup.py
-
-Contains dependency and other python metadata
+Contains dependency and other Python metadata.
 
 ### activation.json
-
-Used during simulation only, contains the activation definition for the extension
+Used during simulation only — contains the activation definition for the extension.
